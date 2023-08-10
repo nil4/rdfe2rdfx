@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <RootNamespace />
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Deterministic>true</Deterministic>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <LangVersion>preview</LangVersion>
+        <Features>strict</Features>
+        <DebugType>embedded</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <None Include="*.DotSettings" Visible="false" />
+    </ItemGroup>
+</Project>
