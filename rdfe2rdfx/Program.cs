@@ -66,7 +66,7 @@ static class Program
         ConvertDataToXml(data, outputPath);
     }
 
-    static void ConvertDataToXml(DynamicFolderExport data, string path)
+    static void ConvertDataToXml(DynamicFolderExport export, string path)
     {
         using FileStream stream = File.OpenWrite(path);
         using var xml = XmlWriter.Create(stream, new XmlWriterSettings
@@ -82,19 +82,19 @@ static class Program
         });
         
         xml.WriteStartElement(nameof(DynamicFolderExport));
-        WriteStringValue(xml, nameof(DynamicFolderExport.Name), data.Name);
+        WriteStringValue(xml, nameof(export.Name), export.Name);
         
-        xml.WriteStartElement(nameof(DynamicFolderExport.Objects));
-        foreach (var entry in data.Objects)
+        xml.WriteStartElement(nameof(export.Objects));
+        foreach (var @object in export.Objects)
         {
             xml.WriteStartElement(nameof(DynamicFolderExportObject));
-            WriteStringValue(xml, nameof(DynamicFolderExportObject.Type), entry.Type);
-            WriteStringValue(xml, nameof(DynamicFolderExportObject.Name), entry.Name);
-            WriteStringValue(xml, nameof(DynamicFolderExportObject.Description), entry.Description);
-            WriteStringValue(xml, nameof(DynamicFolderExportObject.Notes), entry.Notes);
+            WriteStringValue(xml, nameof(@object.Type), @object.Type);
+            WriteStringValue(xml, nameof(@object.Name), @object.Name);
+            WriteStringValue(xml, nameof(@object.Description), @object.Description);
+            WriteStringValue(xml, nameof(@object.Notes), @object.Notes);
 
-            xml.WriteStartElement(nameof(DynamicFolderExportObject.CustomProperties));
-            foreach (var prop in entry.CustomProperties)
+            xml.WriteStartElement(nameof(@object.CustomProperties));
+            foreach (var prop in @object.CustomProperties)
             {
                 xml.WriteStartElement(nameof(CustomProperty));
                 WriteStringValue(xml, nameof(prop.Name), prop.Name);
@@ -102,18 +102,18 @@ static class Program
                 WriteStringValue(xml, nameof(prop.Value), prop.Value);
                 xml.WriteEndElement(/* nameof(CustomProperty) */);
             }
-            xml.WriteEndElement(/* nameof(DynamicFolderExportObject.CustomProperties)*/ );
+            xml.WriteEndElement(/* nameof(@object.CustomProperties) */);
             
-            WriteStringValue(xml, nameof(DynamicFolderExportObject.ScriptInterpreter), entry.ScriptInterpreter);
-            WriteStringValue(xml, nameof(DynamicFolderExportObject.Script), entry.Script);
+            WriteStringValue(xml, nameof(@object.ScriptInterpreter), @object.ScriptInterpreter);
+            WriteStringValue(xml, nameof(@object.Script), @object.Script);
 
-            WriteStringValue(xml, nameof(DynamicFolderExportObject.DynamicCredentialScriptInterpreter), entry.DynamicCredentialScriptInterpreter);
-            WriteStringValue(xml, nameof(DynamicFolderExportObject.DynamicCredentialScript), entry.DynamicCredentialScript);
+            WriteStringValue(xml, nameof(@object.DynamicCredentialScriptInterpreter), @object.DynamicCredentialScriptInterpreter);
+            WriteStringValue(xml, nameof(@object.DynamicCredentialScript), @object.DynamicCredentialScript);
             
             xml.WriteEndElement(/* nameof(DynamicFolderExportObject) */);
         }
         
-        xml.WriteEndElement(/* nameof(DynamicFolderExport.Objects) */);
+        xml.WriteEndElement(/* nameof(data.Objects) */);
         xml.WriteEndElement(/* nameof(DynamicFolderExport) */);
         
         xml.Flush();
@@ -122,21 +122,12 @@ static class Program
 
     static void WriteStringValue(XmlWriter writer, string elementName, string? value)
     {
-        if (HasMultipleNewlines(value))
-        {
+        if (string.IsNullOrEmpty(value) || !value.Contains('\n'))
+            writer.WriteElementString(elementName, value);
+        else {
             writer.WriteStartElement(elementName);
             writer.WriteCData(value);
             writer.WriteEndElement();
-        }
-        else writer.WriteElementString(elementName, value);
-
-        static bool HasMultipleNewlines(string? s)
-        {
-            if (string.IsNullOrEmpty(s)) return false;
-            var p = s.IndexOf('\n');
-            if (p < 0) return false;
-            p = s.IndexOf('\n', p);
-            return p > 0;
         }
     }
 
